@@ -20,7 +20,7 @@ class Item {
 		let checkBox = document.createElement('input');
 		checkBox.type = 'checkbox';
 		checkBox.checked = false;
-			
+
 		let removeButton = document.createElement('button');
 		removeButton.innerHTML = 'REMOVE';
 		removeButton.classList.add('removeButton');
@@ -30,34 +30,57 @@ class Item {
 		itemBox.appendChild(input);
 		itemBox.appendChild(checkBox);
 		itemBox.appendChild(removeButton);
-
-		checkBox.addEventListener('click', () => this.done(input));
-
-		removeButton.addEventListener('click', () => this.remove(itemBox));
-
+	}
+}
+	
+class ToDoState {
+	constructor(state) {
+		this.state = state;
 	}
 	
-	done(input) {
-		input.classList.toggle('done');
-	}
+	addToDo () {
+		if(input.value != "") {
+			new Item(input.value);
+			input.value = ""; 
+		}
+	};
 
-	remove(item) {
-		container.removeChild(item);
-	}
-}
+	removeToDo () {
+		if (event.target.classList == 'removeButton') {		
+			let removeBtn = event.target;
+			let removeTask = removeBtn.closest('div');
+			removeTask.remove();
+		}
+	};
 
-function check() {
-	if(input.value != "") {
-		new Item(input.value);
-		input.value = "";
-	}
-}
+	toggleToDo () {
+		if (event.target.type == 'checkbox') {
+			let checkbox = event.target;
+			let doneTask = checkbox.closest('div').firstChild;
+			doneTask.classList.toggle('done');
+		};
+	};
 
-addButton.addEventListener('click', check);
+	editTaskToDo () {
+		if (event.target.type == 'text') {
+			let input = event.target;
+			
+			if (input.disabled == true) {
+				input.disabled = !input.disabled;
+			}
+		}
+	}
+};
+
+const listState = new ToDoState('workOn');
+
+addButton.addEventListener('click', listState.addToDo);
+container.addEventListener('click', listState.removeToDo);
+container.addEventListener('click', listState.toggleToDo);
+container.addEventListener('click', listState.editTaskToDo);
 
 window.addEventListener('keydown', (e) => {
 	if(e.which == 13) {
-		check();
+		listState.addToDo();
 	}
 })
-
